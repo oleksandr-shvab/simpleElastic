@@ -1,7 +1,6 @@
 import elasticsearch
 from elasticsearch import Elasticsearch
 from datetime import datetime
-import time
 from pprint import pprint
 
 
@@ -15,8 +14,7 @@ def create_index(es):
 def delete_index(es):
     print("Enter index name")
     index_name = input(">>> ")
-    # If we have index with the same name rewrite it
-    es.indices.delete(index=index_name, ignore=400)
+    es.indices.delete(index=index_name)
 
 
 def find_all_indices(es):
@@ -51,6 +49,7 @@ def add_document(es):
         body[field_name] = data
         print(body)
 
+    # Add last_update field with current data
     body["last_update"] = datetime.now()
     result = es.index(index=index_name, body=body)
     print(result)
@@ -72,11 +71,8 @@ def reindex(es):
                 "source": {"index": source_index},
                 "dest": {"index": destination_index + sufix}
             },  request_timeout=30, wait_for_completion=True)
-            # task_id = result.get("task")
-            # print(tasks.cancel(task_id=task_id, wait_for_completion=True))
-            # task_info = tasks.get(task_id=task_id)
-            # pprint(task_info)
-            pprint(tasks.list())
+            # Manage tasks
+            # pprint(tasks.list())
             if result['total'] and result['took'] and not result['timed_out']:
                 print("Index: ", source_index, " Seems reindex was successful, going to delete the old index!")
                 es.indices.delete(source_index, timeout='300s')
@@ -103,7 +99,8 @@ def update_documents(es):
             # Update document with prepared data
             response = es.update(index=index_name, doc_type="_doc", id=doc_id,
                                  body=source_to_update, request_timeout=30)
-            pprint(tasks.list())
+            # Manage tasks
+            # pprint(tasks.list())
             print(response, '\n')
             if response['result'] == "updated":
                 print("result: ", response['result'])
