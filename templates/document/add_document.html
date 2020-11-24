@@ -1,0 +1,44 @@
+{% load crispy_forms_tags %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<h2>Add document to car index</h2>
+<form action="." method="post">
+    {% csrf_token %}
+    {{ form.management_form }}
+    {% for fields in form %}
+        <div>
+            <div>
+                <label for="{{ fields.name.id_for_label }}">
+                    {{ fields.name.label }}
+                </label>
+                {{ fields.name }}
+                <div class="invalid-feedback">
+                    {% for error in fields.name.errors %}
+                        <div>{{ error }}</div>
+                    {% endfor %}
+                </div>
+            </div>
+             <div>
+                <label for="{{ fields.number.id_for_label }}">
+                    {{ fields.number.label }}
+                </label>
+                {{ fields.number }}
+                 <div class="invalid-feedback">
+                     {% for error in fields.number.errors %}
+                         <div>{{ error }}</div>
+                     {% endfor %}
+                 </div>
+            </div>
+        </div> </br>
+    {% endfor %}
+    <input type="submit" value="Save">
+</form>
+
+
+</body>
+</html>
