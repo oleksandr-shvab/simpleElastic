@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<h1>Add a new car</h1>
+<form id="form-container" method="POST">
+    {% csrf_token %}
+    {{ car_formset.management_form }}
+    {% for form in car_formset %}
+        <div class="car-form">
+            {{ form.as_p }}
+        </div>
+    {% endfor %}
+    <button id="add-form" type="button">Add Another Car</button>
+    <button type="submit">Create Car</button>
+</form>
+
+<script>
+    let carForm = document.querySelectorAll(".car-form")
+    let container = document.querySelector("#form-container")
+    let addButton = document.querySelector("#add-form")
+    let totalForms = document.querySelector("#id_form-TOTAL_FORMS")
+
+    let formNum = carForm.length - 1
+    addButton.addEventListener('click', addForm)
+
+    function addForm(e) {
+        e.preventDefault()
+
+        let newForm = carForm[0].cloneNode(true)
+        let formRegex = RegExp(`form-(\\d){1}-`, 'g')
+
+        formNum++
+        newForm.innerHTML = newForm.innerHTML.replace(formRegex, `form-${formNum}-`)
+        container.insertBefore(newForm, addButton)
+
+        totalForms.setAttribute('value', `${formNum + 1}`)
+    }
+</script>
+</body>
+</html>
